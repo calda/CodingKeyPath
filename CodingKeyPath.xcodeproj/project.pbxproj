@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		2EDD574F2426A5C600501605 /* CodingKeyPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EDD574E2426A5C600501605 /* CodingKeyPath.swift */; };
 		2EDD57512426A5D000501605 /* CodingKeyPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EDD57502426A5D000501605 /* CodingKeyPathTests.swift */; };
+		2EDD57532426BFDF00501605 /* CodingKeyPath+PrivateImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EDD57522426BFDF00501605 /* CodingKeyPath+PrivateImpl.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -18,6 +19,7 @@
 		2E9775142401E2030061D12F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2EDD574E2426A5C600501605 /* CodingKeyPath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CodingKeyPath.swift; sourceTree = "<group>"; };
 		2EDD57502426A5D000501605 /* CodingKeyPathTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CodingKeyPathTests.swift; sourceTree = "<group>"; };
+		2EDD57522426BFDF00501605 /* CodingKeyPath+PrivateImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CodingKeyPath+PrivateImpl.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +72,7 @@
 			children = (
 				2EDD574E2426A5C600501605 /* CodingKeyPath.swift */,
 				2E9775142401E2030061D12F /* Info.plist */,
+				2EDD57522426BFDF00501605 /* CodingKeyPath+PrivateImpl.swift */,
 			);
 			path = CodingKeyPath;
 			sourceTree = "<group>";
@@ -191,6 +194,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2EDD57532426BFDF00501605 /* CodingKeyPath+PrivateImpl.swift in Sources */,
 				2EDD574F2426A5C600501605 /* CodingKeyPath.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

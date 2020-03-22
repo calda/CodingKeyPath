@@ -16,6 +16,29 @@ struct EvolutionProposal: Codable {
         case reviewEndDate = "metadata.reviewEndDate"
     }
     
+    /// The compiler will auto-synthesize this:
+    init(from decoder: Decoder) throws {
+        let container = try decoder.keyPathContainer(keyedBy: CodingKeyPaths.self)
+        id = try container.decode(String.self, forKeyPath: .id)
+        title = try container.decode(String.self, forKeyPath: .title)
+        reviewStartDate = try container.decode(Date.self, forKeyPath: .reviewStartDate)
+        reviewEndDate = try container.decode(Date.self, forKeyPath: .reviewEndDate)
+    }
+    
+    /// The compiler will auto-synthesize this:
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.keyPathContainer(keyedBy: CodingKeyPaths.self)
+        try container.encode(id, forKeyPath: .id)
+        try container.encode(title, forKeyPath: .title)
+        try container.encode(reviewStartDate, forKeyPath: .reviewStartDate)
+        try container.encode(reviewEndDate, forKeyPath: .reviewEndDate)
+    }
+    
+}
+
+// MARK: Tests
+
+extension EvolutionProposal {
     static let sampleJsonPayload = Data("""
     {
       "id" : "SE-0274",
@@ -26,25 +49,7 @@ struct EvolutionProposal: Codable {
       }
     }
     """.utf8)
-    
-    /// The compiler will auto-synthesize this:
-    func encode(to encoder: Encoder) throws {
-        try encoder.encode(id, forKeyPath: CodingKeyPaths.id)
-        try encoder.encode(title, forKeyPath: CodingKeyPaths.title)
-        try encoder.encode(reviewStartDate, forKeyPath: CodingKeyPaths.reviewStartDate)
-        try encoder.encode(reviewEndDate, forKeyPath: CodingKeyPaths.reviewEndDate)
-    }
-    
-    /// The compiler will auto-synthesize this:
-    init(from decoder: Decoder) throws {
-        id = try decoder.decode(String.self, forKeyPath: CodingKeyPaths.id)
-        title = try decoder.decode(String.self, forKeyPath: CodingKeyPaths.title)
-        reviewStartDate = try decoder.decode(Date.self, forKeyPath: CodingKeyPaths.reviewStartDate)
-        reviewEndDate = try decoder.decode(Date.self, forKeyPath: CodingKeyPaths.reviewEndDate)
-    }
 }
-
-// MARK: Tests
 
 class CodingKeyPathTests: XCTestCase {
 

@@ -21,79 +21,92 @@ public extension CodingKeyPath where Self: RawRepresentable, RawValue == String 
     }
 }
 
-// MARK: - _CodingKeyPathComponent
+// MARK: - KeyPathEncodingContainer
 
-private struct _CodingKeyPathComponent: CodingKey {
-    public let intValue: Int?
-    public let stringValue: String
+public struct KeyPathEncodingContainer<K: CodingKeyPath> {
     
-    init(intValue: Int) {
-        self.intValue = intValue
-        self.stringValue = "\(intValue)"
+    public mutating func encode<T>(_ value: T, forKeyPath keyPath: K) throws where T: Encodable {
+        try underlyingContainer.encode(value, forKeyPath: keyPath)
     }
     
-    init(stringValue: String) {
-        self.intValue = nil
-        self.stringValue = stringValue
+    public mutating func encodeIfPresent<T>(_ value: T?, forKeyPath keyPath: K) throws where T: Encodable {
+        try underlyingContainer.encodeIfPresent(value, forKeyPath: keyPath)
     }
     
-    init(codingKeyValue: CodingKey) {
-        if let intValue = codingKeyValue.intValue {
-            self = _CodingKeyPathComponent(intValue: intValue)
-        } else {
-            self = _CodingKeyPathComponent(stringValue: codingKeyValue.stringValue)
-        }
+    private var underlyingContainer: KeyedEncodingContainer<_CodingKeyPathComponent>
+    
+    init(wrapping underlyingContainer: KeyedEncodingContainer<_CodingKeyPathComponent>) {
+        self.underlyingContainer = underlyingContainer
+    }
+    
+}
+
+public extension Encoder {
+    func keyPathContainer<KeyPath>(keyedBy type: KeyPath.Type)
+        -> KeyPathEncodingContainer<KeyPath> where KeyPath: CodingKeyPath
+    {
+        KeyPathEncodingContainer<KeyPath>(wrapping: container(keyedBy: _CodingKeyPathComponent.self))
     }
 }
 
-private extension CodingKeyPath {
-    var _components: [_CodingKeyPathComponent] {
-        if let existingKeyPathComponents = components as? [_CodingKeyPathComponent] {
-            return existingKeyPathComponents
-        } else {
-            return components.map { _CodingKeyPathComponent(codingKeyValue: $0) }
-        }
+public extension KeyedEncodingContainer {
+    mutating func nestedKeyPathContainer<KeyPath>(keyedBy type: KeyPath.Type, forKey key: Key) throws
+        -> KeyPathEncodingContainer<KeyPath> where KeyPath: CodingKeyPath
+    {
+        KeyPathEncodingContainer<KeyPath>(wrapping: nestedContainer(keyedBy: _CodingKeyPathComponent.self, forKey: key))
     }
 }
 
-// MARK: Decoder + CodingKeyPath
-
-extension Decoder {
-    public func decode<T: Decodable>(_ type: T.Type, forKeyPath keyPath: CodingKeyPath) throws -> T {
-        var currentNestedContainer = try self.container(keyedBy: _CodingKeyPathComponent.self)
-        var currentKeyPathComponents = keyPath._components
-        
-        while currentKeyPathComponents.count > 1 {
-            let currentKeyPathComponent = currentKeyPathComponents[0]
-            currentKeyPathComponents = Array(currentKeyPathComponents[1...])
-            currentNestedContainer = try currentNestedContainer.nestedContainer(keyedBy: _CodingKeyPathComponent.self, forKey: currentKeyPathComponent)
-        }
-        
-        return try currentNestedContainer.decode(T.self, forKey: currentKeyPathComponents[0])
+public extension UnkeyedEncodingContainer {
+    mutating func nestedKeyPathContainer<KeyPath>(keyedBy type: KeyPath.Type) throws
+        -> KeyPathEncodingContainer<KeyPath> where KeyPath: CodingKeyPath
+    {
+        KeyPathEncodingContainer<KeyPath>(wrapping: nestedContainer(keyedBy: _CodingKeyPathComponent.self))
     }
 }
 
-// MARK: Encoder + CodingKeyPath
+// MARK: - KeyPathDecodingContainer
 
-extension Encoder {
-    public func encode<T: Encodable>(_ value: T, forKeyPath keyPath: CodingKeyPath) throws {
-        guard keyPath.components.count > 0 else {
-            throw EncodingError.invalidValue(
-                value,
-                EncodingError.Context(
-                    codingPath: keyPath.components,
-                    debugDescription: "Invalid CodingKeyPath. Path must not be empty."))
-        }
-        
-        var currentNestedContainer = self.container(keyedBy: _CodingKeyPathComponent.self)
-        var currentKeyPathComponents = keyPath._components
-        
-        while currentKeyPathComponents.count > 1 {
-            let currentKeyPathComponent = currentKeyPathComponents[0]
-            currentKeyPathComponents = Array(currentKeyPathComponents[1...])
-            currentNestedContainer = currentNestedContainer.nestedContainer(keyedBy: _CodingKeyPathComponent.self, forKey: currentKeyPathComponent)
-        }
-        
-        return try currentNestedContainer.encode(value, forKey: currentKeyPathComponents[0])
+public struct KeyPathDecodingContainer<K> where K: CodingKeyPath {
+    
+    public func decode<T>(_ type: T.Type, forKeyPath keyPath: K) throws -> T where T: Decodable {
+        try underlyingContainer.decode(T.self, forKeyPath: keyPath)
+    }
+    
+    public func decodeIfPresent<T>(_ type: T.Type, forKeyPath keyPath: K) throws -> T? where T: Decodable {
+        try underlyingContainer.decodeIfPresent(T.self, forKeyPath: keyPath)
+    }
+    
+    private var underlyingContainer: KeyedDecodingContainer<_CodingKeyPathComponent>
+    
+    init(wrapping underlyingContainer: KeyedDecodingContainer<_CodingKeyPathComponent>) {
+        self.underlyingContainer = underlyingContainer
+    }
+    
+}
+
+public extension Decoder {
+    func keyPathContainer<KeyPath>(keyedBy type: KeyPath.Type) throws
+        -> KeyPathDecodingContainer<KeyPath> where KeyPath: CodingKeyPath
+    {
+        try KeyPathDecodingContainer(wrapping: self.container(keyedBy: _CodingKeyPathComponent.self))
     }
 }
+
+public extension KeyedDecodingContainer {
+    mutating func nestedKeyPathContainer<KeyPath>(keyedBy type: KeyPath.Type, forKey key: Key) throws
+        -> KeyPathDecodingContainer<KeyPath> where KeyPath: CodingKeyPath
+    {
+        try KeyPathDecodingContainer(wrapping: nestedContainer(keyedBy: _CodingKeyPathComponent.self, forKey: key))
+    }
+}
+
+public extension UnkeyedDecodingContainer {
+    mutating func nestedKeyPathContainer<KeyPath>(keyedBy type: KeyPath.Type) throws
+        -> KeyPathDecodingContainer<KeyPath> where KeyPath: CodingKeyPath
+    {
+        try KeyPathDecodingContainer(wrapping: nestedContainer(keyedBy: _CodingKeyPathComponent.self))
+    }
+}
+
+
