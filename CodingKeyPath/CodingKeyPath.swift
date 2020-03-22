@@ -1,19 +1,31 @@
 
-import Foundation
 
 // MARK: - CodingKeyPath
 
-public protocol CodingKeyPath {
+public protocol CodingKeyPath: CustomStringConvertible, CustomDebugStringConvertible {
     var components: [CodingKey] { get }
 }
 
 public extension CodingKeyPath where Self: RawRepresentable, RawValue == String {
     var components: [CodingKey] {
         rawValue
-            .components(separatedBy: ".")
-            .map { _CodingKeyPathComponent(stringValue: $0) }
+            .split(separator: ".")
+            .map { _CodingKeyPathComponent(stringValue: String($0)) }
     }
 }
+
+public extension CodingKeyPath {
+  /// A textual representation of this key path.
+  var description: String {
+    components.map { $0.stringValue }.joined(separator: ".")
+  }
+
+  /// A textual representation of this key path, suitable for debugging.
+  var debugDescription: String {
+    return description
+  }
+}
+
 
 // MARK: - KeyPathEncodingContainer
 
