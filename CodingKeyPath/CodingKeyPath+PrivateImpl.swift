@@ -2,25 +2,19 @@
 // MARK: - _CodingKeyPathComponent
 
 struct _CodingKeyPathComponent: CodingKey {
-    public let intValue: Int?
     public let stringValue: String
-    
-    init(intValue: Int) {
-        self.intValue = intValue
-        self.stringValue = "\(intValue)"
-    }
+    public let intValue: Int? = nil
     
     init(stringValue: String) {
-        self.intValue = nil
         self.stringValue = stringValue
     }
     
+    init?(intValue: Int) {
+        return nil
+    }
+    
     init(codingKeyValue: CodingKey) {
-        if let intValue = codingKeyValue.intValue {
-            self = _CodingKeyPathComponent(intValue: intValue)
-        } else {
-            self = _CodingKeyPathComponent(stringValue: codingKeyValue.stringValue)
-        }
+        self.stringValue = codingKeyValue.stringValue
     }
 }
 

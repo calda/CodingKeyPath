@@ -11,13 +11,7 @@ public extension CodingKeyPath where Self: RawRepresentable, RawValue == String 
     var components: [CodingKey] {
         rawValue
             .components(separatedBy: ".")
-            .map { stringComponent in
-                if let intComponent = Int(stringComponent) {
-                    return _CodingKeyPathComponent(intValue: intComponent)
-                } else {
-                    return _CodingKeyPathComponent(stringValue: stringComponent)
-                }
-        }
+            .map { _CodingKeyPathComponent(stringValue: $0) }
     }
 }
 
@@ -108,5 +102,4 @@ public extension UnkeyedDecodingContainer {
         try KeyPathDecodingContainer(wrapping: nestedContainer(keyedBy: _CodingKeyPathComponent.self))
     }
 }
-
 
