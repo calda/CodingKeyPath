@@ -1,8 +1,9 @@
 # `CodingKeyPath`
 
-* Authors: [Cal Stephens](https://twitter.com/calstephens98)
-* Implementation: [`calda/swift cal--coding-key-path`](https://github.com/calda/swift/tree/cal--coding-key-path)
-* Status: Waiting for Review
+* Author: [Cal Stephens](https://twitter.com/calstephens98)
+* Implementation: [apple/swift#30570](https://github.com/apple/swift/pull/30570)
+* Status: **Waiting for Review** ([apple/swift-evolution#1133](https://github.com/apple/swift-evolution/pull/1133))
+* Previous Proposal: [Add support for Encoding and Decoding nested JSON keys](https://github.com/calda/NestedKeyEncodingStrategy)
 
 ## Introduction
 
@@ -10,9 +11,11 @@ Today, encoding and decoding `Codable` objects using the compiler's synthesized 
 
 I propose that we add a new `CodingKeyPath` type that allows consumers to key into nested objects using [dot notation](https://developer.apple.com/documentation/objectivec/nsobject/1416468-value).
 
+_Swift-evolution thread: [CodingKeyPath](https://forums.swift.org/t/codingkeypath/34710)_
+
 ## Motivation
 
-Application authors often have little to no control over the structure of the encoded payloads they receive. It is often desirable to rename or reorganize fields of the payload at the time of deocoding.
+Application authors often have little to no control over the structure of the encoded payloads they receive. It is often desirable to rename or reorganize fields of the payload at the time of decoding.
 
 Here is a theoretical JSON payload representing a Swift Evolution proposal ([SE-0274](https://github.com/apple/swift-evolution/blob/master/proposals/0274-magic-file.md)):
 
@@ -27,7 +30,7 @@ Here is a theoretical JSON payload representing a Swift Evolution proposal ([SE-
 }
 ```
 
-The consumer of this payload may desire to hoist fields from the `metadata` object to the root level:
+The consumer of this payload may prefer to hoist fields from the `metadata` object to the root level:
 
 ```swift
 struct EvolutionProposal: Codable {
@@ -64,7 +67,7 @@ struct EvolutionProposal: Codable {
 
 [`NSDictionary.value(forKeyPath:)`](https://developer.apple.com/documentation/objectivec/nsobject/1416468-value) supports retrieving nested values using dot notation.
 
-Many existing model parsing frameworks support dot notation for decoding nested keys. Some examples include:
+Many existing model parsing frameworks support dot notation for accessing nested keys. Some examples include:
  - **[Mantle](https://github.com/Mantle/Mantle#mtlmodel)**, _"Model framework for Cocoa and Cocoa Touch"_
  - **[Unbox](https://github.com/JohnSundell/Unbox#key-path-support)**, _"The easy to use Swift JSON decoder"_
  - **[ObjectMapper](https://github.com/tristanhimmelman/ObjectMapper#easy-mapping-of-nested-objects)**, _"Simple JSON Object mapping written in Swift"_
