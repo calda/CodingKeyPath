@@ -11,7 +11,7 @@ Today, encoding and decoding `Codable` objects using the compiler's synthesized 
 
 I propose that we add a new `CodingKeyPath` type that allows consumers to key into nested objects using [dot notation](https://developer.apple.com/documentation/objectivec/nsobject/1416468-value).
 
-_Swift-evolution thread: [CodingKeyPath](https://forums.swift.org/t/codingkeypath/34710)_
+_Swift-evolution thread: [CodingKeyPath: Add support for Encoding and Decoding nested objects with dot notation](https://forums.swift.org/t/codingkeypath/34710)_
 
 ## Motivation
 
@@ -112,7 +112,7 @@ public struct KeyPathDecodingContainer<K> where K: CodingKeyPath {
 ### New Standard Library methods
 
 This proposal doesn't add any new requirements on the `Encoder` and `Decoder` protocols, so all existing implementations (`JSONEncoder`, `PlistDecoder`, etc.) will receive this behavior automatically.
- - `KeyPathEncodingContainer` and `KeyPathDecodingContainer` simply wrap the existing `KeyedEncodingContainer` and `KeyedEncodingContainer` types, so they don't require any additional support.
+ - `KeyPathEncodingContainer` and `KeyPathDecodingContainer` simply wrap the existing `KeyedEncodingContainer` and `KeyedDecodingContainer` types, so they don't require any additional support.
  
 ```swift
 public extension Encoder {
